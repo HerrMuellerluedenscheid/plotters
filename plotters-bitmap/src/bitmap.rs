@@ -339,8 +339,10 @@ impl<'a, P: PixelFormat> DrawingBackend for BitMapBackend<'a, P> {
 impl<P: PixelFormat> Drop for BitMapBackend<'_, P> {
     fn drop(&mut self) {
         if !self.saved {
-            // drop should not panic, so we ignore a failed present
-            let _ = self.present();
+            // drop should not panic, so we print failed present to stderr.
+            if let Err(err) = self.present() {
+                eprintln!("{:?}", err)
+            }
         }
     }
 }
